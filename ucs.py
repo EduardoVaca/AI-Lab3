@@ -75,6 +75,9 @@ class SearchNode:
         self.parent = parent
         self.action = action
         self.path_cost = path_cost
+
+    def __str__(self):
+        return str(self.state) + ' -> ' + self.action + ' -> ' + self.path_cost
     
     def child_node(self, parent_p, action_p):
         """Method that creates a child node of node.
@@ -94,9 +97,9 @@ class SearchNode:
 
 def main():
     state = State('(X, Y); (A, B); (C)')
-    print(state)
-    actions_l = state.possible_actions({}, 3)
-    print(actions_l)
+    node = SearchNode(state, None, None, 0)
+    print(node)
+    
 
 if __name__ == '__main__':
     main()
