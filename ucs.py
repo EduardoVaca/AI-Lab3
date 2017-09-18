@@ -108,7 +108,7 @@ class SearchNode:
         state.result(action_p, height_limit)
         parent = self
         action = action_p
-        path_cost = 0 if not parent else parent.path_cost + parent.state.step_cost(action)
+        path_cost = parent.path_cost + parent.state.step_cost(action)
         return SearchNode(state, parent, action, path_cost)
 
 def get_goal_state(state_str):
@@ -131,27 +131,32 @@ def is_goal_state(state, goal_state):
             return False
     return True
 
+def create_path_to_goal(node):
+    cost = node.path_cost
+    actions = []
+    while node.action:
+        actions.append(node.action)
+        node = node.parent
+    return (cost, actions[::-1])
+
 def graph_search(state, goal_state, height_limit):
     frontier = []
     heapq.heappush(frontier, SearchNode(state, None, None, 0))
     explored_set = set()
-    while frontier:
-        print('here')
+    while frontier:        
         current_node = heapq.heappop(frontier)
         if is_goal_state(current_node.state, goal_state):
-            return True# HERE THE PATH
+            return create_path_to_goal(current_node)
         explored_set.add(current_node.state.key())
-        actions = current_node.state.possible_actions(explored_set, height_limit)
-        print(actions)
+        actions = current_node.state.possible_actions(explored_set, height_limit)        
         for node in [current_node.child_node(action, height_limit) for action in actions]:
-            heapq.heappush(frontier, node)
-        print(frontier)
-    return False
+            heapq.heappush(frontier, node)        
+    return (-1, [])
 
 def main():
     #height_limit, state, goal_state = int(input()), State(input()), get_goal_state(input())
-    goal_state = get_goal_state('(A, C); X; X')
-    print(graph_search(State('(A); (B); (C)'), goal_state, 2))
+    goal_state = get_goal_state('(A, B); (); ()')
+    print(graph_search(State('(A); (B); ()'), goal_state, 1))
 
 if __name__ == '__main__':
     main()
