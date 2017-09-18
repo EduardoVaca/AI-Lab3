@@ -2,6 +2,7 @@
 LAB: (Un)informed Search
 A01207563
 """
+import copy
 
 class State:
 
@@ -39,6 +40,15 @@ class State:
             container = self.stack_containers[action[0]].pop()
             self.stack_containers[action[1]].append(container)
 
+    def step_cost(self, action):
+        """Calculates the cost of a given action from current state
+        PARAMS:
+        - action: tuple 0: start, 1: finish representing movement of container.
+        RETURNS:
+        - cost of action.
+        """
+        return 1 + abs(action[0] - action[1])
+
     def possible_actions(self, visited_states, height_limit):
         """Generates all the possible actions from a current state.
         PARAMS:
@@ -58,11 +68,35 @@ class State:
                     actions.append((i, j))
         return actions
 
+class SearchNode:
 
-state = State('(X, Y); (A, B); (C)')
-print(state)
-actions_l = state.possible_actions({}, 3)
-print(actions_l)
+    def __init__(self, state, parent, action, path_cost):
+        self.state = state
+        self.parent = parent
+        self.action = action
+        self.path_cost = path_cost
+    
+    def child_node(self, parent_p, action_p):
+        """Method that creates a child node of node.
+        PARAMS:
+        - parent_p : Parent node.
+        - action_p : action to be applied.
+        RETURNS:
+        - new search node.
+        """
+        state = None if not parent_p else copy.deepcopy(parent_p.state)
+        state.result(action_p)
+        parent = parent_p
+        action = action_p
+        path_cost = 0 if not parent else parent.path_cost + parent.state.step_cost(action)
+        return SearchNode(state, parent, action, path_cost)
 
 
+def main():
+    state = State('(X, Y); (A, B); (C)')
+    print(state)
+    actions_l = state.possible_actions({}, 3)
+    print(actions_l)
 
+if __name__ == '__main__':
+    main()
