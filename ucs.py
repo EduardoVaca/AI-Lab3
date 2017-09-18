@@ -3,6 +3,7 @@ LAB: (Un)informed Search
 A01207563
 """
 import copy
+import heapq
 
 class State:
 
@@ -78,6 +79,9 @@ class SearchNode:
         self.action = action
         self.path_cost = path_cost
 
+    def __cmp__(self, other):
+        return cmp(self.path_cost, other.path_cost)
+
     def print_node(self):
         """DEBUG PRINT.
         """
@@ -98,15 +102,30 @@ class SearchNode:
         path_cost = 0 if not parent else parent.path_cost + parent.state.step_cost(action)
         return SearchNode(state, parent, action, path_cost)
 
+def goal_state(state_str):
+    """Creates a dict with indexes and meaningful stack_container goal values.
+    PARAMS:
+    - state_str : state string
+    RETURNS:
+    - dictionary of goal state
+    """
+    for ch in [' ', '(', ')']:
+        state_str = state_str.replace(ch, '')
+    stacks = state_str.split(';')
+    return {i: stacks[i] for i in range(len(stacks)) if stacks[i] and stacks[i] != 'X'}
 
 def main():
+    """
     state = State('(X, Y); (A, B); (C)')
     node = SearchNode(state, None, None, 0)
     node.print_node()
     actions = node.state.possible_actions({}, 5)
     children = [node.child_node(action, 5) for action in actions]
     for child in children:
-        child.print_node()
+        child.print_node()    
+    """
+    height_limit, state, goal_state = int(input()), State(input()), goal_state(input())
+
     
 
 if __name__ == '__main__':
