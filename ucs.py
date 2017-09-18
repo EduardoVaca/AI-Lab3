@@ -68,6 +68,8 @@ class State:
                     actions.append((i, j))
         return actions
 
+    __repr__ = __str__
+
 class SearchNode:
 
     def __init__(self, state, parent, action, path_cost):
@@ -76,20 +78,22 @@ class SearchNode:
         self.action = action
         self.path_cost = path_cost
 
-    def __str__(self):
-        return str(self.state) + ' -> ' + self.action + ' -> ' + self.path_cost
+    def print_node(self):
+        """DEBUG PRINT.
+        """
+        print(self.state)
+        print('{} -> {}'.format(self.action, self.path_cost))
     
-    def child_node(self, parent_p, action_p):
+    def child_node(self, action_p, height_limit):
         """Method that creates a child node of node.
         PARAMS:
-        - parent_p : Parent node.
         - action_p : action to be applied.
         RETURNS:
         - new search node.
         """
-        state = None if not parent_p else copy.deepcopy(parent_p.state)
-        state.result(action_p)
-        parent = parent_p
+        state = copy.deepcopy(self.state)
+        state.result(action_p, height_limit)
+        parent = self
         action = action_p
         path_cost = 0 if not parent else parent.path_cost + parent.state.step_cost(action)
         return SearchNode(state, parent, action, path_cost)
@@ -98,7 +102,11 @@ class SearchNode:
 def main():
     state = State('(X, Y); (A, B); (C)')
     node = SearchNode(state, None, None, 0)
-    print(node)
+    node.print_node()
+    actions = node.state.possible_actions({}, 5)
+    children = [node.child_node(action, 5) for action in actions]
+    for child in children:
+        child.print_node()
     
 
 if __name__ == '__main__':
