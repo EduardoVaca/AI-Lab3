@@ -21,6 +21,9 @@ class State:
             state_str += ';(' + ','.join(stack) + ')'
         return state_str[1:]
 
+    def key(self):
+        return str(self)
+
     def is_action_possible(self, action, height_limit):
         """Checks if a following action is possible from current state.
         PARAMS:
@@ -61,12 +64,18 @@ class State:
         actions = []
         for i in range(len(self.stack_containers)):
             for j in range(i+1, len(self.stack_containers)):
-                if self.is_action_possible((i, j), height_limit) and str(self) not in visited_states:
-                    actions.append((i, j))
+                if self.is_action_possible((i, j), height_limit):
+                    self.result((i, j), height_limit)
+                    if self.key() not in visited_states:
+                        actions.append((i, j))
+                    self.result((j, i), height_limit) # Return to original state
         for i in range(len(self.stack_containers)):
             for j in range(0, i):
-                if self.is_action_possible((i, j), height_limit) and str(self) not in visited_states:
-                    actions.append((i, j))
+                if self.is_action_possible((i, j), height_limit):
+                    self.result((i, j), height_limit)
+                    if self.key() not in visited_states:
+                        actions.append((i, j))
+                    self.result((j, i), height_limit) # Return to original state
         return actions
 
     __repr__ = __str__
@@ -79,8 +88,8 @@ class SearchNode:
         self.action = action
         self.path_cost = path_cost
 
-    def __cmp__(self, other):
-        return cmp(self.path_cost, other.path_cost)
+    def __lt__(self, other):
+        return self.path_cost < other.path_cost
 
     def print_node(self):
         """DEBUG PRINT.
@@ -102,7 +111,7 @@ class SearchNode:
         path_cost = 0 if not parent else parent.path_cost + parent.state.step_cost(action)
         return SearchNode(state, parent, action, path_cost)
 
-def goal_state(state_str):
+def get_goal_state(state_str):
     """Creates a dict with indexes and meaningful stack_container goal values.
     PARAMS:
     - state_str : state string
@@ -112,21 +121,37 @@ def goal_state(state_str):
     for ch in [' ', '(', ')']:
         state_str = state_str.replace(ch, '')
     stacks = state_str.split(';')
-    return {i: stacks[i] for i in range(len(stacks)) if stacks[i] and stacks[i] != 'X'}
+    return {i: stacks[i].split(',') for i in range(len(stacks)) if stacks[i] and stacks[i] != 'X'}
+
+def is_goal_state(state, goal_state):
+    """Checks if a state is goal state
+    """
+    for k,v in goal_state.items():
+        if state.stack_containers[k] != v:
+            return False
+    return True
+
+def graph_search(state, goal_state, height_limit):
+    frontier = []
+    heapq.heappush(frontier, SearchNode(state, None, None, 0))
+    explored_set = set()
+    while frontier:
+        print('here')
+        current_node = heapq.heappop(frontier)
+        if is_goal_state(current_node.state, goal_state):
+            return True# HERE THE PATH
+        explored_set.add(current_node.state.key())
+        actions = current_node.state.possible_actions(explored_set, height_limit)
+        print(actions)
+        for node in [current_node.child_node(action, height_limit) for action in actions]:
+            heapq.heappush(frontier, node)
+        print(frontier)
+    return False
 
 def main():
-    """
-    state = State('(X, Y); (A, B); (C)')
-    node = SearchNode(state, None, None, 0)
-    node.print_node()
-    actions = node.state.possible_actions({}, 5)
-    children = [node.child_node(action, 5) for action in actions]
-    for child in children:
-        child.print_node()    
-    """
-    height_limit, state, goal_state = int(input()), State(input()), goal_state(input())
-
-    
+    #height_limit, state, goal_state = int(input()), State(input()), get_goal_state(input())
+    goal_state = get_goal_state('(A, C); X; X')
+    print(graph_search(State('(A); (B); (C)'), goal_state, 2))
 
 if __name__ == '__main__':
     main()
