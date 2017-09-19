@@ -6,6 +6,8 @@ import copy
 import heapq
 
 class State:
+    """Class that represents the state of the search.
+    """
 
     def __init__(self, stacks_str):
         for ch in [' ', '(', ')']:
@@ -81,6 +83,8 @@ class State:
     __repr__ = __str__
 
 class SearchNode:
+    """Class that represents the node of the search.
+    """
 
     def __init__(self, state, parent, action, path_cost):
         self.state = state
@@ -125,6 +129,11 @@ def get_goal_state(state_str):
 
 def is_goal_state(state, goal_state):
     """Checks if a state is goal state
+    PARAMS:
+    - state : current state
+    - goal_state : dictionary of goal state
+    RETURNS:
+    - true if goal state, else false
     """
     for k,v in goal_state.items():
         if state.stack_containers[k] != v:
@@ -132,6 +141,12 @@ def is_goal_state(state, goal_state):
     return True
 
 def create_path_to_goal(node):
+    """Create the path from goal node to initial node.
+    PARAMS:
+    - node : goal node
+    RETURNS:
+    - tuple with cost and list of actions
+    """
     cost = node.path_cost
     actions = []
     while node.action:
@@ -140,6 +155,14 @@ def create_path_to_goal(node):
     return (cost, actions[::-1])
 
 def graph_search(state, goal_state, height_limit):
+    """Uniform Cost-Search.
+    PARAMS:
+    - state : initial state
+    - goal_state : dictionary of goal state
+    - height_limit : limit of height of stacks
+    RETURNS:
+    - tuple of cost and path
+    """
     frontier = []
     heapq.heappush(frontier, SearchNode(state, None, None, 0))
     explored_set = set()
@@ -154,9 +177,15 @@ def graph_search(state, goal_state, height_limit):
     return (-1, [])
 
 def main():
-    #height_limit, state, goal_state = int(input()), State(input()), get_goal_state(input())
-    goal_state = get_goal_state('(A, B); (); ()')
-    print(graph_search(State('(A); (B); ()'), goal_state, 1))
+    """Main method.
+    """
+    height_limit, state, goal_state = int(input()), State(input()), get_goal_state(input())    
+    result = graph_search(state, goal_state, height_limit)
+    if result[0] != -1:
+        print(result[0])        
+        print('; '.join([str(x) for x in result[1]]))
+    else:
+        print('No solution found')
 
 if __name__ == '__main__':
     main()
