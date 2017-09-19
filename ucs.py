@@ -95,12 +95,6 @@ class SearchNode:
     def __lt__(self, other):
         return self.path_cost < other.path_cost
 
-    def print_node(self):
-        """DEBUG PRINT.
-        """
-        print(self.state)
-        print('{} -> {}'.format(self.action, self.path_cost))
-    
     def child_node(self, action_p, height_limit):
         """Method that creates a child node of node.
         PARAMS:
@@ -166,14 +160,14 @@ def graph_search(state, goal_state, height_limit):
     frontier = []
     heapq.heappush(frontier, SearchNode(state, None, None, 0))
     explored_set = set()
-    while frontier:        
+    while frontier:
         current_node = heapq.heappop(frontier)
         if is_goal_state(current_node.state, goal_state):
             return create_path_to_goal(current_node)
         explored_set.add(current_node.state.key())
-        actions = current_node.state.possible_actions(explored_set, height_limit)        
+        actions = current_node.state.possible_actions(explored_set, height_limit)
         for node in [current_node.child_node(action, height_limit) for action in actions]:
-            heapq.heappush(frontier, node)        
+            heapq.heappush(frontier, node)
     return (-1, [])
 
 def main():
