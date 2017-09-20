@@ -3,21 +3,11 @@ LAB: (Un)informed Search
 Algorithm: A* with consistent heuristic
 A01207563
 """
+import utils
 import heapq
 import problem_search_node
 import problem_state
 
-def get_goal_state(state_str):
-    """Creates a dict with indexes and meaningful stack_container goal values.
-    PARAMS:
-    - state_str : state string
-    RETURNS:
-    - dictionary of goal state
-    """
-    for ch in [' ', '(', ')']:
-        state_str = state_str.replace(ch, '')
-    stacks = state_str.split(';')
-    return {i: stacks[i].split(',') for i in range(len(stacks)) if stacks[i] and stacks[i] != 'X'}
 
 def get_heurisitc_cost_stacks(element, stack_index, goal_state, unused_stacks, unused_index):
     """Gets the heuristic cost of an element placed in a different stack
@@ -81,33 +71,6 @@ def cons_heuristic(state, goal_state):
             cost += get_heuristic_cost_height(state.stack_containers[i][j], j, height_dict)            
     return cost
 
-def is_goal_state(state, goal_state):
-    """Checks if a state is goal state
-    PARAMS:
-    - state : current state
-    - goal_state : dictionary of goal state
-    RETURNS:
-    - true if goal state, else false
-    """
-    for k,v in goal_state.items():
-        if state.stack_containers[k] != v:
-            return False
-    return True
-
-def create_path_to_goal(node):
-    """Create the path from goal node to initial node.
-    PARAMS:
-    - node : goal node
-    RETURNS:
-    - tuple with cost and list of actions
-    """
-    cost = node.cost
-    actions = []
-    while node.action:
-        actions.append(node.action)
-        node = node.parent
-    return (cost, actions[::-1])
-
 def graph_search(state, goal_state, height_limit):
     """A* with consistent heuristic.
     PARAMS:
@@ -122,8 +85,8 @@ def graph_search(state, goal_state, height_limit):
     explored_set = set()
     while frontier:
         current_node = heapq.heappop(frontier)
-        if is_goal_state(current_node.state, goal_state):
-            return create_path_to_goal(current_node)
+        if utils.is_goal_state(current_node.state, goal_state):
+            return utils.create_path_to_goal(current_node)
         explored_set.add(current_node.state.key())
         actions = current_node.state.possible_actions(explored_set, height_limit)
         for node in [current_node.child_node(action, height_limit, cons_heuristic, goal_state) for action in actions]:
@@ -133,7 +96,7 @@ def graph_search(state, goal_state, height_limit):
 def main():
     """Main method.
     """
-    height_limit, state, goal_state = int(input()), problem_state.State(input()), get_goal_state(input())    
+    height_limit, state, goal_state = int(input()), problem_state.State(input()), utils.get_goal_state(input())    
     result = graph_search(state, goal_state, height_limit)
     if result[0] != -1:
         print(result[0])        
