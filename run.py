@@ -3,10 +3,10 @@ LAB: (Un)informed Search
 Algorithm: A* with consistent heuristic
 A01207563
 """
-import utils
 import heapq
 import problem_search_node
 import problem_state
+import utils
 
 
 def get_heurisitc_cost_stacks(element, stack_index, goal_state, unused_stacks, unused_index):
