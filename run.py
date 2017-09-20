@@ -101,7 +101,7 @@ def create_path_to_goal(node):
     RETURNS:
     - tuple with cost and list of actions
     """
-    cost = node.path_cost
+    cost = node.cost
     actions = []
     while node.action:
         actions.append(node.action)
@@ -118,7 +118,7 @@ def graph_search(state, goal_state, height_limit):
     - tuple of cost and path
     """
     frontier = []
-    heapq.heappush(frontier, problem_search_node.SearchNode(state, None, None, 0))
+    heapq.heappush(frontier, problem_search_node.SearchNode(state, None, None, 0, 0))
     explored_set = set()
     while frontier:
         current_node = heapq.heappop(frontier)
