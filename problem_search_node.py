@@ -13,7 +13,7 @@ class SearchNode:
     def __lt__(self, other):
         return self.path_cost < other.path_cost
 
-    def child_node(self, action_p, height_limit, heuristic = None):
+    def child_node(self, action_p, height_limit, heuristic = None, goal_state = None):
         """Method that creates a child node of node.
         PARAMS:
         - action_p : action to be applied.
@@ -24,8 +24,8 @@ class SearchNode:
         state.result(action_p, height_limit)
         parent = self
         action = action_p
-        if heuristic:
-            path_cost = parent.path_cost + parent.state.step_cost(action) + heuristic(state)
+        if heuristic and goal_state:
+            path_cost = parent.path_cost + parent.state.step_cost(action) + heuristic(state, goal_state)
         else:
             path_cost = parent.path_cost + parent.state.step_cost(action)
         return SearchNode(state, parent, action, path_cost)
