@@ -9,9 +9,26 @@ import problem_state
 import utils
 
 def get_goal_heights(goal_state):
+    """Creates a dict with stack index and height
+    PARAMS:
+    - goal_state : Dict of goal state
+    RETURNS:
+    - dict with index and height
+    """
     return {k: len(v) for k,v in goal_state.items()}
 
 def uncons_heuristic(state, goal_state_heights):
+    """Method for calulating heuristic cost h(x)
+    The heuristic is:
+    1. Calculate the diference of stack heights compared with the goal stacks
+    2. Do this for all stacks
+    4. Sum values
+    PARAMS:
+    - state : Current state of the problem
+    - goal_state : Dict of goal state
+    RETURNS:
+    - Heuristic cost
+    """ 
     cost = 0
     for k,v in goal_state_heights.items():
         cost += abs(len(state.stack_containers[k]) - v)
