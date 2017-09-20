@@ -1,5 +1,6 @@
 """
 LAB: (Un)informed Search
+Algorithm: Uniform Cost-Search
 A01207563
 """
 import heapq
