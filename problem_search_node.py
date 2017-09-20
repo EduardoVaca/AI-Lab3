@@ -25,7 +25,7 @@ class SearchNode:
         parent = self
         action = action_p
         if heuristic and goal_state:
-            path_cost = parent.path_cost + parent.state.step_cost(action) + heuristic(state, goal_state)
+            path_cost = parent.path_cost + parent.state.step_cost(action) + heuristic(state, goal_state)            
         else:
             path_cost = parent.path_cost + parent.state.step_cost(action)
         return SearchNode(state, parent, action, path_cost)
