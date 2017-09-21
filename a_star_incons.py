@@ -15,7 +15,7 @@ def get_goal_heights(goal_state):
     RETURNS:
     - dict with index and height
     """
-    return {k: len(v) for k,v in goal_state.items()}
+    return {k: len(v) for k, v in goal_state.items()}
 
 def uncons_heuristic(state, goal_state_heights):
     """Method for calulating heuristic cost h(x)
@@ -28,9 +28,9 @@ def uncons_heuristic(state, goal_state_heights):
     - goal_state : Dict of goal state
     RETURNS:
     - Heuristic cost
-    """ 
+    """
     cost = 0
-    for k,v in goal_state_heights.items():
+    for k, v in goal_state_heights.items():
         cost += abs(len(state.stack_containers[k]) - v)
     return cost
 
@@ -59,8 +59,8 @@ def graph_search(state, goal_state, height_limit):
 def main():
     """Main method.
     """
-    height_limit, state, goal_state = int(input()), problem_state.State(input()), utils.get_goal_state(input())    
-    result = graph_search(state, goal_state, height_limit)    
+    height_limit, state, goal_state = int(input()), problem_state.State(input()), utils.get_goal_state(input())
+    result = graph_search(state, goal_state, height_limit)
     if result[0] != -1:
         print(result[0])        
         print('; '.join([str(x) for x in result[1]]))
