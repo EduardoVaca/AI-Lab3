@@ -1,4 +1,5 @@
 # TC2011 - Uninformed Search Lab
+# AI
 
 ## The Container Crane Problem
 
